@@ -1,0 +1,22 @@
+<mxfile host="65bd71144e">
+    <diagram id="aG1vcw9TWAtBGWNjd9MT" name="Page-1">
+        <mxGraphModel dx="1355" dy="797" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#FFFFFF" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#004C99;strokeColor=#546EF0;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="110" width="700" height="540" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="&lt;b&gt;&lt;font color=&quot;#030303&quot;&gt;&quot; ABRIR BUSCADOR DE USUARIO &quot;&lt;/font&gt;&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;strokeColor=#151019;fillColor=#EDEDED;" vertex="1" parent="1">
+                    <mxGeometry x="590" y="140" width="130" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#030303;strokeColor=#151019;fillColor=#004C99;" vertex="1" parent="1">
+                    <mxGeometry x="840" y="110" width="140" height="530" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="" style="whiteSpace=wrap;html=1;fontSize=10;fontColor=#030303;strokeColor=#151019;fillColor=#004C99;" vertex="1" parent="1">
+                    <mxGeometry x="550" y="350" width="120" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
