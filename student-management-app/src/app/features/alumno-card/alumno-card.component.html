@@ -1,0 +1,120 @@
+<div class = "main">
+  <mat-toolbar color="primary">
+    <button mat-raised-button color="accent">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <span class = "divider"></span>
+
+    <button mat-raised-button color="accent" (click) = "toggleSideNav()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-card>
+    <div class = "grid-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput placeholder="Nombre">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Primer apellido</mat-label>
+        <input matInput placeholder="Primer apellido">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>DNI</mat-label>
+        <input matInput placeholder="DNI">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Segundo apellido</mat-label>
+        <input matInput placeholder="Segundo apellido">
+        <mat-hint> Opcional </mat-hint>
+      </mat-form-field>
+    </div>
+
+
+    <div>
+      <mat-divider></mat-divider>
+    </div>
+
+    <div class="grid-container" id = "grid-container2">
+      <mat-form-field appearance="outline">
+        <mat-label>Teléfono</mat-label>
+        <input matInput placeholder="Teléfono">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Otro teléfono</mat-label>
+        <input matInput placeholder="Otro teléfono">
+        <mat-hint>Opcional</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Email">
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-divider></mat-divider>
+    </div>
+
+    <div class="grid-container" id = "grid-container2">
+      <mat-form-field appearance="outline">
+        <mat-label>País</mat-label>
+        <input matInput placeholder="País">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Provincia</mat-label>
+        <input matInput placeholder="Provincia">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Código Postal</mat-label>
+        <input matInput placeholder="Código Postal">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Localidad</mat-label>
+        <input matInput placeholder="Localidad">
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-divider></mat-divider>
+    </div>
+
+    <div class="grid-container" id = "grid-container2">
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario</mat-label>
+        <input matInput placeholder="Usuario">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Contraseña</mat-label>
+
+        <input matInput [type]="hide ? 'password' : 'text'">
+        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+
+        <mat-hint>
+          <mat-checkbox>
+            Permitir modificar contraseña
+          </mat-checkbox>
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class = "submit-button">
+      <button mat-raised-button color="accent" disabled ="true"> Guardar </button>
+    </div>
+
+  </mat-card>
+</div>
+
+
