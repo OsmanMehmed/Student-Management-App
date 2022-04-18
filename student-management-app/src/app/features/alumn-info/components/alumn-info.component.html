@@ -1,0 +1,156 @@
+<main>
+  <mat-toolbar color = "primary">
+
+    <ng-container *ngIf = "alumnEditable && editingAlumn">
+      <button mat-raised-button color = "accent" (click) = "editing()">
+        <mat-icon> edit </mat-icon>
+      </button>
+    </ng-container>
+
+
+    <ng-container *ngIf = "!alumnEditable && editingAlumn">
+      <button mat-raised-button color = "accent" (click) = "editing()">
+        <mat-icon> clear </mat-icon>
+      </button>
+    </ng-container>
+
+
+    <span class = "divider"></span>
+
+    <button mat-raised-button color = "accent" (click) = "toggleSideNav()">
+      <mat-icon> menu </mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <form [formGroup] = "alumnData">
+    <mat-card>
+      <div class = "grid-container">
+        <mat-form-field appearance =  "outline">
+          <mat-label> Nombre </mat-label>
+          <input matInput  placeholder = "Nombre" formControlName = "name">
+        </mat-form-field>
+
+        <mat-form-field appearance = "outline">
+          <mat-label> Primer apellido </mat-label>
+          <input matInput  placeholder = "Primer apellido" formControlName = "middleName">
+        </mat-form-field>
+
+        <mat-form-field appearance = "outline">
+          <mat-label> DNI </mat-label>
+          <input matInput  placeholder = "DNI" formControlName = "id">
+        </mat-form-field>
+
+        <mat-form-field appearance = "outline">
+          <mat-label> Segundo apellido</mat-label>
+          <input matInput  placeholder = "Segundo apellido" formControlName = "lastName">
+          <mat-hint> Opcional </mat-hint>
+        </mat-form-field>
+      </div>
+
+
+      <div>
+        <mat-divider></mat-divider>
+      </div>
+
+      <div class = "grid-container" id = "grid-container2">
+        <mat-form-field appearance = "outline">
+          <mat-label> Teléfono</mat-label>
+          <input matInput  placeholder = "Teléfono" formControlName = "phone">
+        </mat-form-field>
+
+        <mat-form-field appearance = "outline">
+          <mat-label> Otro teléfono</mat-label>
+          <input matInput  placeholder = "Otro teléfono" formControlName = "anotherPhone">
+          <mat-hint>Opcional</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance = "outline">
+          <mat-label> Email</mat-label>
+          <input matInput  placeholder = "Email" formControlName = "email">
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-divider></mat-divider>
+      </div>
+
+      <div class = "grid-container" id = "grid-container2">
+        <mat-form-field appearance = "outline">
+          <mat-label> País</mat-label>
+          <!-- <input matInput  placeholder = "País" formControlName = "country"> -->
+          <mat-select formControlName = "country">
+            <mat-option value = "" disabled selected > {{ selectedCountry }} </mat-option>
+            <mat-option *ngFor="let country of countries" [value]="country.name">{{country.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance = "outline">
+          <mat-label> Provincia</mat-label>
+          <input matInput  placeholder = "Provincia" formControlName = "province">
+        </mat-form-field>
+
+        <mat-form-field appearance = "outline">
+          <mat-label> Código Postal</mat-label>
+          <input matInput  placeholder = "Código Postal" formControlName = "postalCode">
+        </mat-form-field>
+
+        <mat-form-field appearance = "outline">
+          <mat-label> Localidad</mat-label>
+          <input matInput  placeholder = "Localidad" formControlName = "location">
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-divider></mat-divider>
+      </div>
+
+      <div class = "grid-container" id = "grid-container2">
+        <mat-form-field appearance = "outline">
+          <mat-label> Nombre de usuario </mat-label>
+          <input matInput  placeholder = "Nombre de usuario" formControlName = "userName">
+        </mat-form-field>
+
+        <div>
+          <mat-form-field appearance = "outline">
+            <mat-label> Contraseña </mat-label>
+
+            <input matInput (keyup) = "calculateStrongness()" [type] = "hidePassword ? 'password' : 'text'" formControlName = "password">
+            <button mat-icon-button [disabled] = "editingAlumn" matSuffix (click) = "hidePassword = !hidePassword" [attr.aria-label]  = "'Hide password'" [attr.aria-pressed] = "hidePassword">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+
+          </mat-form-field>
+
+          <app-strength-bar [strenght] = "strenght"></app-strength-bar>
+
+          <mat-hint *ngIf = "editingAlumn">
+            <mat-checkbox  [disabled] = "alumnEditable" formControlName = "checkboxPassword" (change) = "toggleCheckBox()">
+              Permitir modificar contraseña
+            </mat-checkbox>
+          </mat-hint>
+        </div>
+      </div>
+
+      <div class = "submit-button">
+        <ng-container *ngIf = "!editingAlumn">
+            <div>
+              <button mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "saveAlumn()"> Crear </button>
+            </div>
+
+            <mat-error *ngIf = "!alumnData.valid && !alumnData.untouched"> Por favor introduce todos los campos obligatorios </mat-error>
+        </ng-container>
+
+        <ng-container *ngIf = "editingAlumn">
+          <div>
+            <button mat-raised-button color = "accent" [disabled]  = "!alumnData.valid || alumnEditable"  (click) = "saveAlumn()"> Guardar </button>
+          </div>
+
+          <mat-error *ngIf = !alumnData.valid> Por favor introduce todos los campos obligatorios </mat-error>
+        </ng-container>
+      </div>
+      </mat-card>
+    </form>
+
+</main>
+
+

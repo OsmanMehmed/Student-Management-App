@@ -1,0 +1,26 @@
+<main>
+  <mat-card>
+
+    <div>
+      <button mat-raised-button color = "primary" (click) = "modifyUser()">
+        <mat-icon> account_circle </mat-icon>
+      </button>
+    </div>
+
+    <span class = "divider"></span>
+
+    <div>
+      <span> {{ name }} </span>
+    </div>
+
+    <span class = "divider"></span>
+
+    <div>
+      <button mat-raised-button color = "accent" (click) = "deleteUser()">
+        <mat-icon> delete </mat-icon>
+      </button>
+    </div>
+
+
+  </mat-card>
+</main>

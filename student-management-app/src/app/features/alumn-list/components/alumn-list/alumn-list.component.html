@@ -1,0 +1,36 @@
+
+<main>
+
+  <mat-toolbar color = "primary">
+
+    <button mat-raised-button color="accent" (click) = "closeNavBar()">
+      <mat-icon> clear </mat-icon>
+    </button>
+
+    <span class = "divider"></span>
+
+    <button mat-raised-button color="accent" (click) = "createNewUser()">
+      <mat-icon> add </mat-icon>
+    </button>
+
+  </mat-toolbar>
+
+  <mat-radio-group name="opciones" [(ngModel)] = "selectedFilterOption">
+    <mat-radio-button value = "name"> Filtrar por Nombre y Apellidos </mat-radio-button>
+    <mat-radio-button value = "id"> Filtrar por DNI </mat-radio-button>
+    <mat-radio-button value = "email"> Filtrar por email </mat-radio-button>
+  </mat-radio-group>
+
+  <div>
+    <mat-form-field class = "filter" appearance =  "outline">
+      <mat-label> Filtrar </mat-label>
+      <input matInput placeholder = "Filtro" (keyup) = "filter(selectedFilterOption, $event)">
+    </mat-form-field>
+  </div>
+
+  <div>
+      <ng-container *ngFor = "let card of cardArray">
+          <app-alumn-card (userEdit) = "loadExistingUser($event)" [name] = card.name></app-alumn-card>
+      </ng-container>
+  </div>
+</main>

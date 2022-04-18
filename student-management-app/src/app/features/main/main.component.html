@@ -1,14 +1,12 @@
 
 <mat-drawer-container>
   <mat-drawer-content>
-    <app-alumno-card (openSideNavEvent) = "toggleSideNav()"></app-alumno-card>
+    <app-alumn-info [cleanForm] = "cleanForm"  [modifyAlumn] = "modifyAlumn" (openSideNavEvent) = "toggleSideNav($event)"></app-alumn-info>
   </mat-drawer-content>
 
   <mat-drawer mode="over" position="end" [opened]= "sidenav">
-    <app-lista-alumnos (closeSideNavEvent) = "toggleSideNav()"></app-lista-alumnos>
+    <app-alumn-list  (closeSideNavEvent) = "toggleSideNav($event)"></app-alumn-list>
   </mat-drawer>
-
-
 </mat-drawer-container>
 
 

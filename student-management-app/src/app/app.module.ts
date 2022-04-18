@@ -12,17 +12,24 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ListaAlumnosComponent } from './features/lista-alumnos/lista-alumnos.component';
+import { AlumnListComponent } from './features/alumn-list/components/alumn-list/alumn-list.component';
 import { MainComponent } from './features/main/main.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { AlumnoCardComponent } from './features/alumno-card/alumno-card.component';
+import { AlumnInfoComponent } from './features/alumn-info/components/alumn-info.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AlumnCardComponent } from './features/alumn-list/components/alumn-card/alumn-card.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { StrengthBarComponent } from './features/alumn-info/components/strength-bar/strength-bar.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
-    ListaAlumnosComponent,
-    AlumnoCardComponent
+    AlumnListComponent,
+    AlumnInfoComponent,
+    AlumnCardComponent,
+    StrengthBarComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +44,11 @@ import { AlumnoCardComponent } from './features/alumno-card/alumno-card.componen
     MatGridListModule,
     MatToolbarModule,
     MatIconModule,
-    MatSidenavModule
+    MatSidenavModule,
+    ReactiveFormsModule,
+    MatRadioModule,
+    FormsModule,
+    MatSelectModule
 
   ],
   providers: [],

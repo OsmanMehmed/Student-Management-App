@@ -1,4 +1,19 @@
 
 mat-drawer-container{
-  width: 40%;
+  width: 600px;
+
+
+  mat-drawer{
+    width: 70%;
+  }
+
+  @media only screen and (max-width: 700px) {
+
+    mat-drawer{
+      width: 100%;
+    }
+  }
 }
+
+
+

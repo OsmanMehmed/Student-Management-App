@@ -1,0 +1,22 @@
+
+
+main{
+  .divider{
+    display: flex;
+    flex: 1 1 auto;
+  }
+
+  mat-radio-group{
+    padding-left: 0.4cm;
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+  }
+
+  .filter{
+    width: 60%;
+    margin-left: 20%;
+  }
+
+}

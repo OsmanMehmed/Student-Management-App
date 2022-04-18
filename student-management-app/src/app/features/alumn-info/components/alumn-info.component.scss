@@ -1,0 +1,51 @@
+main{
+
+  .divider{
+    flex: 1 1 auto;
+  }
+
+  mat-card{
+    background-color: #d800730c;
+
+    .grid-container{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 238px);
+      column-gap: 10%;
+      margin-left: 10px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+
+    #grid-container2{
+      margin-top: 40px;
+    }
+
+    .submit-button{
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+
+      button{
+        margin-top: 0.4cm;
+        margin-bottom: 0.3cm;
+      }
+    }
+
+
+
+    @media only screen and (max-width: 700px) {
+
+      .grid-container{
+        width: 95%;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+
+        mat-form-field{
+          width: 60%;
+          margin: 0 auto;
+        }
+      }
+    }
+  }
+}
