@@ -67,6 +67,7 @@ export class AlumnInfoComponent implements OnInit {
     this.cleanForm.subscribe( event =>{
 
       this.submitButtonMode = "Crear";
+      this.alumnData.enable();
       this.alumnData.reset();
       this.alumnData.markAsUntouched();
       this.alumnData.markAsPristine();
@@ -110,12 +111,12 @@ export class AlumnInfoComponent implements OnInit {
       this.alumnData.get('password')?.enable();
     } else {
       this.alumnData.get('password')?.disable();
-      this.alumnData.get('password')?.setValue('');
     }
   }
 
   allowEditAlumnData(){
     this.alumnData.enable();
+    this.alumnData.get('password')?.disable();
   }
 
   disableEditAlumnData(){
@@ -152,9 +153,11 @@ export class AlumnInfoComponent implements OnInit {
       } as Alumn
     )
 
+    this.alumnData.enable();
     this.alumnData.reset();
     this.alumnData.markAsUntouched();
     this.alumnData.markAsPristine();
+    this.submitButtonMode = "Crear";
 
   }
 
@@ -164,42 +167,45 @@ export class AlumnInfoComponent implements OnInit {
 
     // Longitud
 
-    if (password.length == 7 && password.length == 8){
-      points = points + 1;
-    } else if (password.length >= 9 && password.length <= 12){
-      points = points + 2;
-    } else if (password.length > 12){
-      points = points + 3;
-    }
+    if (password){
 
-    // Contiene letras
+      if (password.length == 7 && password.length == 8){
+        points = points + 1;
+      } else if (password.length >= 9 && password.length <= 12){
+        points = points + 2;
+      } else if (password.length > 12){
+        points = points + 3;
+      }
 
-    if (/[a-zA-Z]/.test(password)){
-      points = points + 1;
-    }
+      // Contiene letras
 
-    // Uso de mayúsculas y minúsculas
+      if (/[a-zA-Z]/.test(password)){
+        points = points + 1;
+      }
 
-    if (/[A-Z]/.test(password) && /[a-z]/.test(password)){
-      points = points + 2;
-    }
+      // Uso de mayúsculas y minúsculas
 
-    // Uso de números
+      if (/[A-Z]/.test(password) && /[a-z]/.test(password)){
+        points = points + 2;
+      }
 
-    if (/[0-9]/.test(password)){
-      points = points + 1;
-    }
+      // Uso de números
 
-    // Uso de símbolos
+      if (/[0-9]/.test(password)){
+        points = points + 1;
+      }
 
-    if (/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/.test(password)){
-      points = points + 2;
-    }
+      // Uso de símbolos
 
-    // Si cumple con todo lo anterior se le da un punto extra
+      if (/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/.test(password)){
+        points = points + 2;
+      }
 
-    if (points == 9){
-      points = 10;
+      // Si cumple con todo lo anterior se le da un punto extra
+
+      if (points == 9){
+        points = 10;
+      }
     }
 
     this.strenght.next([this.alumnData.get('password'),points]);
