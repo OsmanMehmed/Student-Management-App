@@ -46,7 +46,7 @@ export class AlumnListComponent implements OnInit {
 
   filter(mode: string, filteringText: string){
 
-    if (!!mode && !!filteringText){
+    if (!!mode && !!filteringText && filteringText.length > 0){
 
       if (mode == "name"){
         this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.name+element.middleName+element.lastName).includes(filteringText));
