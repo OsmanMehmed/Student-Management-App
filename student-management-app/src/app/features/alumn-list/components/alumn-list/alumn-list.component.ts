@@ -1,3 +1,5 @@
+import { BehaviorSubject } from 'rxjs';
+import { FormControl } from '@angular/forms';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Alumn } from 'src/app/features/alumn-info/models/alumn.model';
 import { AlumnManagerServiceService } from 'src/app/features/alumn-info/services/alumn-manager-service.service';
@@ -12,10 +14,18 @@ export class AlumnListComponent implements OnInit {
   @Output() closeSideNavEvent = new EventEmitter<number | string>();
 
   public selectedFilterOption!: string;
-  public cardArray: Alumn[];
+  public cardArray !: Alumn[];
+  private cardArray$: BehaviorSubject<Alumn[]>;
+  public filterAlumn: FormControl = new FormControl();
+
 
   constructor(public alumnManagerService: AlumnManagerServiceService) {
-    this.cardArray = this.alumnManagerService.alumnList
+    this.cardArray$ = this.alumnManagerService.alumnList$;
+
+    this.cardArray$.subscribe( list => {
+      this.cardArray = list;
+    })
+
   }
 
   ngOnInit(): void {
@@ -34,23 +44,22 @@ export class AlumnListComponent implements OnInit {
     this.closeSideNavEvent.emit(alumnName);
   }
 
-  filter(mode: string, event: any){
+  filter(mode: string, filteringText: string){
 
+    if (!!mode && !!filteringText){
 
-    if (mode == "name"){
-      this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.name+element.middleName+element.lastName).includes(event.target.value))
-      console.log(this.cardArray);
+      if (mode == "name"){
+        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.name+element.middleName+element.lastName).includes(filteringText));
+        console.log(this.cardArray);
+      }
 
-    }
+      if (mode == "id"){
+        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.userID).includes(filteringText));
+      }
 
-    if (mode == "id"){
-      this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.userID).includes(event.target.value))
-    }
-
-    if (mode == "email"){
-      this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.email).includes(event.target.value))
+      if (mode == "email"){
+        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.email).includes(filteringText));
+      }
     }
   }
-
-
 }

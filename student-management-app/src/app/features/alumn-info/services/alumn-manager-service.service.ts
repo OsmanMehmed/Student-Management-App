@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Alumn } from '../models/alumn.model';
 
@@ -8,6 +9,8 @@ import { Alumn } from '../models/alumn.model';
 
 export class AlumnManagerServiceService {
   private _alumnList: Alumn[] = [];
+  private _alumnList$: BehaviorSubject<Alumn[]> = new BehaviorSubject<Alumn[]>(this._alumnList);
+
 
   constructor() {
 
@@ -37,6 +40,13 @@ export class AlumnManagerServiceService {
     this._alumnList = value;
   }
 
+  public get alumnList$(): BehaviorSubject<Alumn[]> {
+    return this._alumnList$;
+  }
+  public set alumnList$(value: BehaviorSubject<Alumn[]>) {
+    this._alumnList$ = value;
+  }
+
   public saveAlumn(alumn: Alumn){
 
    if (this._alumnList.some((element) => element.name == alumn.name)){
@@ -49,6 +59,7 @@ export class AlumnManagerServiceService {
 
     }
 
+    this.alumnList$.next(this._alumnList);
     localStorage.setItem(alumn.name, JSON.stringify(alumn));
 
   }
@@ -60,26 +71,12 @@ export class AlumnManagerServiceService {
       this._alumnList.splice(this._alumnList.indexOf(deleteAlumn),1);
     }
 
+    this.alumnList$.next(this.alumnList);
     localStorage.removeItem(alumn);
   }
 
   public getAlumn(name: string){
     return localStorage.getItem(name);
   }
-
-  // FILTRAR POR NOMBRE
-
-
-  // FILTRAR POR APELLIDOS
-
-
-  // FILTRAR POR DNI
-
-
-  // FILTRAR POR EMAIL
-
-
-  // ELIMINAR ALUMNO POR ID
-
 
 }
