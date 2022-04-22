@@ -4,6 +4,8 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from
 import { AlumnManagerServiceService } from '../services/alumn-manager-service.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { countries } from '../../util/country.data';
+import { discardPeriodicTasks } from '@angular/core/testing';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-alumn-info',
@@ -12,17 +14,18 @@ import { countries } from '../../util/country.data';
 })
 export class AlumnInfoComponent implements OnInit {
 
-  public hidePassword: boolean = true;
   public countries:any = countries;
-  public checkboxPressed: boolean = false;
-  public alumnEditable: boolean = false;
-  public editingAlumn: boolean = false;
+
   @Input("cleanForm") cleanForm !: Subject<boolean>;
   @Input("modifyAlumn") modifyAlumn !: Subject<Alumn>;
+
   public strenght: Subject<[AbstractControl | null, number]> = new Subject();
-  public alumnData!: FormGroup;
+  public alumnData !: FormGroup;
+
   private passwordActualAlumn!: string;
-  public selectedCountry!: string;
+  hidePassword: boolean = true;
+  submitButtonMode: string = "Crear";
+  showLess8Notification: boolean = false;
 
   @Output() openSideNavEvent = new EventEmitter<number>();
 
@@ -32,42 +35,30 @@ export class AlumnInfoComponent implements OnInit {
 
     this.alumnData = this.form.group({
 
-      name: new FormControl({value: '', disabled: this.alumnEditable}, [Validators.required]),
+      name: new FormControl('', Validators.required),
+      middleName: new FormControl('', Validators.required),
+      lastName: new FormControl(''),
+      email: new FormControl('',[Validators.required, Validators.email]),
 
-      middleName: new FormControl({value: '', disabled: this.alumnEditable}, Validators.required),
+      id: new FormControl('',
+      [Validators.required, Validators.pattern('[0-9]{8,8}[A-Za-z]')]),
 
-      lastName: new FormControl({value: '', disabled: this.alumnEditable}),
+      phone: new FormControl('',
+      [Validators.required, Validators.pattern('(0034|34)?[ -]*(6|7)([0-9]){2}[ -]?(([0-9]){2}[ -]?([0-9]){2}[ -]?([0-9]){2}|([0-9]){3}[ -]?([0-9]){3})')]),
 
-      email: new FormControl({value: '', disabled: this.alumnEditable},
-                              [Validators.required,
-                              Validators.email]),
+      anotherPhone: new FormControl('',
+      [Validators.pattern('(0034|34)?[ -]*(6|7)([0-9]){2}[ -]?(([0-9]){2}[ -]?([0-9]){2}[ -]?([0-9]){2}|([0-9]){3}[ -]?([0-9]){3})')]),
 
-      id: new FormControl({value: '', disabled: this.alumnEditable},
-                          [Validators.required,
-                          Validators.pattern('[0-9]{8,8}[A-Za-z]')]),
+      country: new FormControl('', Validators.required),
+      province: new FormControl('', Validators.required),
+      postalCode: new FormControl('', Validators.required),
+      location: new FormControl('', Validators.required),
+      userName: new FormControl('', Validators.required),
 
-      phone: new FormControl({value: '', disabled: this.alumnEditable},
-                              [Validators.required,
-                              Validators.pattern('(0034|34)?[ -]*(6|7)([0-9]){2}[ -]?(([0-9]){2}[ -]?([0-9]){2}[ -]?([0-9]){2}|([0-9]){3}[ -]?([0-9]){3})')]),
+      password: new FormControl('',
+      [Validators.required, Validators.minLength(6)]),
 
-      anotherPhone: new FormControl({value: '', disabled: this.alumnEditable},
-                                    [Validators.pattern('(0034|34)?[ -]*(6|7)([0-9]){2}[ -]?(([0-9]){2}[ -]?([0-9]){2}[ -]?([0-9]){2}|([0-9]){3}[ -]?([0-9]){3})')]),
-
-      country: new FormControl({value: '', disabled: this.alumnEditable}, Validators.required),
-
-      province: new FormControl({value: '', disabled: this.alumnEditable}, Validators.required),
-
-      postalCode: new FormControl({value: '', disabled: this.alumnEditable}, Validators.required),
-
-      location: new FormControl({value: '', disabled: this.alumnEditable}, Validators.required),
-
-      userName: new FormControl({value: '', disabled: this.alumnEditable}, Validators.required),
-
-      password: new FormControl({value: '', disabled: this.alumnEditable},
-                                [Validators.required,
-                                  Validators.minLength(6)]),
-
-      checkboxPassword: new FormControl({value: '', disabled: this.alumnEditable})
+      checkboxPassword: new FormControl('')
 
     })
   }
@@ -75,50 +66,37 @@ export class AlumnInfoComponent implements OnInit {
   ngOnInit(): void {
     this.cleanForm.subscribe( event =>{
 
-      if (event){
-        this.alumnEditable = true;
-        this.editingAlumn = false;
-        this.editing();
-        this.alumnData.reset();
-        this.alumnData.get('password')?.enable();
-      }
+      this.submitButtonMode = "Crear";
+      this.alumnData.reset();
+      this.alumnData.markAsUntouched();
+      this.alumnData.markAsPristine();
 
     })
 
     this.modifyAlumn.subscribe( event => {
 
-      this.alumnData.get('name')?.setValue(event.name);
-      this.alumnData.get('middleName')?.setValue(event.middleName);
-      this.alumnData.get('email')?.setValue(event.email);
-      this.alumnData.get('id')?.setValue(event.userID);
-      this.alumnData.get('phone')?.setValue(event.phone);
-      this.alumnData.get('country')?.setValue(event.country);
-      this.selectedCountry = event.country;
-      this.alumnData.get('province')?.setValue(event.province);
-      this.alumnData.get('postalCode')?.setValue(event.postalCode);
-      this.alumnData.get('location')?.setValue(event.location);
-      this.alumnData.get('userName')?.setValue(event.nickName);
-      this.alumnData.get('password')?.setValue('');
+      this.submitButtonMode = "Guardar";
+      this.alumnData.setValue(
+        {
+          name: event.name,
+          middleName: event.middleName,
+          email: event.email,
+          id: event.userID,
+          phone: event.phone,
+          country: event.country,
+          province: event.province,
+          postalCode: event.postalCode,
+          location: event.location,
+          userName: event.nickName,
+          password: '',
+          anotherPhone: (event.otherPhone ?  event.otherPhone : ''),
+          lastName: event.lastName,
+          checkboxPassword: ''
+        }
+      )
+
       this.passwordActualAlumn = event.password;
-      this.alumnData.get('anotherPhone')?.setValue(event.id);
-      this.alumnData.get('lastName')?.setValue(event.lastName);
-
-      this.alumnData.get('name')?.disable();
-      this.alumnData.get('middleName')?.disable();
-      this.alumnData.get('email')?.disable();
-      this.alumnData.get('id')?.disable();
-      this.alumnData.get('phone')?.disable();
-      this.alumnData.get('country')?.disable();
-      this.alumnData.get('province')?.disable();
-      this.alumnData.get('postalCode')?.disable();
-      this.alumnData.get('location')?.disable();
-      this.alumnData.get('userName')?.disable();
-      this.alumnData.get('password')?.disable();
-      this.alumnData.get('anotherPhone')?.disable();
-      this.alumnData.get('lastName')?.disable();
-
-      this.alumnEditable = true;
-      this.editingAlumn = true;
+      this.alumnData.disable();
     })
   }
 
@@ -126,11 +104,9 @@ export class AlumnInfoComponent implements OnInit {
     this.openSideNavEvent.emit(-1);
   }
 
-  toggleCheckBox(){
-    console.log(this.checkboxPressed);
-    this.checkboxPressed = !this.checkboxPressed;
+  toggleAccessEditPassword(event: MatCheckboxChange){
 
-    if (this.checkboxPressed){
+    if (event.checked){
       this.alumnData.get('password')?.enable();
     } else {
       this.alumnData.get('password')?.disable();
@@ -138,52 +114,21 @@ export class AlumnInfoComponent implements OnInit {
     }
   }
 
-  editing(){
-    this.alumnEditable = !this.alumnEditable;
+  allowEditAlumnData(){
+    this.alumnData.enable();
+  }
 
-    if (this.alumnEditable){
-      this.alumnData.get('name')?.disable();
-      this.alumnData.get('middleName')?.disable();
-      this.alumnData.get('email')?.disable();
-      this.alumnData.get('id')?.disable();
-      this.alumnData.get('phone')?.disable();
-      this.alumnData.get('country')?.disable();
-      this.alumnData.get('province')?.disable();
-      this.alumnData.get('postalCode')?.disable();
-      this.alumnData.get('location')?.disable();
-      this.alumnData.get('userName')?.disable();
-      this.alumnData.get('password')?.disable();
-      this.alumnData.get('anotherPhone')?.disable();
-      this.alumnData.get('lastName')?.disable();
-    } else {
-      this.alumnData.get('name')?.enable();
-      this.alumnData.get('middleName')?.enable();
-      this.alumnData.get('email')?.enable();
-      this.alumnData.get('id')?.enable();
-      this.alumnData.get('phone')?.enable();
-      this.alumnData.get('country')?.enable();
-      this.alumnData.get('province')?.enable();
-      this.alumnData.get('postalCode')?.enable();
-      this.alumnData.get('location')?.enable();
-      this.alumnData.get('userName')?.enable();
-
-      if (this.checkboxPressed){
-        this.alumnData.get('password')?.enable();
-      } else {
-        this.alumnData.get('password')?.disable();
-      }
-
-      this.alumnData.get('anotherPhone')?.enable();
-      this.alumnData.get('lastName')?.enable();
-    }
+  disableEditAlumnData(){
+    this.alumnData.enable();
   }
 
   saveAlumn(){
-
     let savePassword: string;
+
     if (this.alumnData.get('password')?.enabled){
       savePassword = this.alumnData.get('password')?.value;
       this.passwordActualAlumn = savePassword;
+
     } else {
       savePassword = this.passwordActualAlumn;
     }
@@ -201,16 +146,15 @@ export class AlumnInfoComponent implements OnInit {
         location: this.alumnData.get('location')?.value,
         nickName: this.alumnData.get('userName')?.value,
         password: savePassword,
-
         otherPhone: this.alumnData.get('anotherPhone')?.value,
         lastName: this.alumnData.get('lastName')?.value,
 
       } as Alumn
     )
 
-    if (!this.editingAlumn){
-      this.alumnData.reset();
-    }
+    this.alumnData.reset();
+    this.alumnData.markAsUntouched();
+    this.alumnData.markAsPristine();
 
   }
 
@@ -252,13 +196,17 @@ export class AlumnInfoComponent implements OnInit {
       points = points + 2;
     }
 
+    // Si cumple con todo lo anterior se le da un punto extra
+
     if (points == 9){
       points = 10;
     }
 
-    console.log(points);
-
-
     this.strenght.next([this.alumnData.get('password'),points]);
+  }
+
+  puntuationLess8Notification(event: boolean){
+
+    this.showLess8Notification = event;
   }
 }

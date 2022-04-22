@@ -1,15 +1,15 @@
 <main>
   <mat-toolbar color = "primary">
 
-    <ng-container *ngIf = "alumnEditable && editingAlumn">
-      <button mat-raised-button color = "accent" (click) = "editing()">
+    <ng-container *ngIf = "alumnData.disabled">
+      <button mat-raised-button color = "accent" (click) = "allowEditAlumnData()">
         <mat-icon> edit </mat-icon>
       </button>
     </ng-container>
 
 
-    <ng-container *ngIf = "!alumnEditable && editingAlumn">
-      <button mat-raised-button color = "accent" (click) = "editing()">
+    <ng-container *ngIf = "!alumnData.disable">
+      <button mat-raised-button color = "accent" (click) = "disableEditAlumnData()">
         <mat-icon> clear </mat-icon>
       </button>
     </ng-container>
@@ -79,7 +79,6 @@
           <mat-label> País</mat-label>
           <!-- <input matInput  placeholder = "País" formControlName = "country"> -->
           <mat-select formControlName = "country">
-            <mat-option value = "" disabled selected > {{ selectedCountry }} </mat-option>
             <mat-option *ngFor="let country of countries" [value]="country.name">{{country.name}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -114,43 +113,39 @@
           <mat-form-field appearance = "outline">
             <mat-label> Contraseña </mat-label>
 
-            <input matInput (keyup) = "calculateStrongness()" [type] = "hidePassword ? 'password' : 'text'" formControlName = "password">
-            <button mat-icon-button [disabled] = "editingAlumn" matSuffix (click) = "hidePassword = !hidePassword" [attr.aria-label]  = "'Hide password'" [attr.aria-pressed] = "hidePassword">
-              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            <input matInput (keypress) = "calculateStrongness()" [type] = "hidePassword ? 'password' : 'text'" formControlName = "password">
+
+            <button mat-icon-button [disabled] = "!alumnData.enabled" matSuffix (click) = "hidePassword = !hidePassword" [attr.aria-label]  = "'Hide password'" [attr.aria-pressed] = "hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
 
           </mat-form-field>
 
-          <app-strength-bar [strenght] = "strenght"></app-strength-bar>
+          <app-strength-bar [strenght] = "strenght" (puntuationLess8) = "puntuationLess8Notification($event)"></app-strength-bar>
 
-          <mat-hint *ngIf = "editingAlumn">
-            <mat-checkbox  [disabled] = "alumnEditable" formControlName = "checkboxPassword" (change) = "toggleCheckBox()">
+          <mat-error *ngIf = "showLess8Notification && alumnData.enabled && alumnData.get('password')?.dirty"> La contraseña introducida es inferior a 8 puntos </mat-error>
+
+          <mat-hint [hidden] = "submitButtonMode === 'Crear'? true: false">
+            <mat-checkbox formControlName = "checkboxPassword" (change) = "toggleAccessEditPassword($event)">
               Permitir modificar contraseña
             </mat-checkbox>
           </mat-hint>
+
         </div>
       </div>
 
       <div class = "submit-button">
-        <ng-container *ngIf = "!editingAlumn">
+        <ng-container>
             <div>
-              <button mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "saveAlumn()"> Crear </button>
+              <button mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "saveAlumn()"> {{ submitButtonMode }} </button>
             </div>
 
-            <mat-error *ngIf = "!alumnData.valid && !alumnData.untouched"> Por favor introduce todos los campos obligatorios </mat-error>
-        </ng-container>
+            <mat-error *ngIf = "!alumnData.valid && !alumnData.untouched && !alumnData.disabled"> Por favor introduce todos los campos obligatorios </mat-error>
 
-        <ng-container *ngIf = "editingAlumn">
-          <div>
-            <button mat-raised-button color = "accent" [disabled]  = "!alumnData.valid || alumnEditable"  (click) = "saveAlumn()"> Guardar </button>
-          </div>
-
-          <mat-error *ngIf = !alumnData.valid> Por favor introduce todos los campos obligatorios </mat-error>
         </ng-container>
       </div>
-      </mat-card>
-    </form>
-
+    </mat-card>
+  </form>
 </main>
 
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 
@@ -8,7 +8,9 @@ import { Subject } from 'rxjs';
   styleUrls: ['./strength-bar.component.scss'],
 })
 export class StrengthBarComponent implements OnInit {
-  @Input("strenght") strenght!: Subject<[AbstractControl | null, number]>;
+  @Input('strenght') strenght!: Subject<[AbstractControl | null, number]>;
+
+  @Output('puntuationLess8') puntuationLess8: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   private readonly COLORS = {
     default: 'black',
@@ -61,24 +63,22 @@ export class StrengthBarComponent implements OnInit {
   };
 
   message: string = this.OPTIONS.empty.message;
-  messagePoints: string = '';
   styles: string[] = this.OPTIONS.empty.styles;
   color: string = this.OPTIONS.empty.color;
-  redColor !: string;
 
   constructor() {}
 
   ngOnInit(): void {
     if (!!this.strenght) {
 
-      this.strenght.subscribe((controller) => {
+      this.strenght.subscribe(controller => {
 
         if (controller[1] < 8){
-          this.messagePoints = "La contraseña tiene una puntuación menor a 8";
-          this.redColor = 'red';
+          this.puntuationLess8.emit(true);
         } else {
-          this.messagePoints = "";
+          this.puntuationLess8.emit(false);
         }
+
         if (controller[0] !== null){
 
           if (!controller[0].value || controller[0].value.length === 0) {

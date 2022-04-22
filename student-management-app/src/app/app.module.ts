@@ -49,8 +49,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatRadioModule,
     FormsModule,
     MatSelectModule
-
   ],
+  exports:[],
   providers: [],
   bootstrap: [AppComponent]
 })
