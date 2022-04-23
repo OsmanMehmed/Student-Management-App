@@ -29,13 +29,11 @@ main{
 
     .submit-button{
       display: flex;
-      flex-direction: column;
-      text-align: right;
+      flex-direction: row;
+    }
 
-      button{
-        margin-top: 0.4cm;
-        margin-bottom: 0.3cm;
-      }
+    .submit-error{
+      text-align: right;
     }
 
     @media only screen and (max-width: 700px) {

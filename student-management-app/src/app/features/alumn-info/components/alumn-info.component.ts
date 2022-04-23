@@ -71,13 +71,7 @@ export class AlumnInfoComponent implements OnInit {
   ngOnInit(): void {
     this.cleanForm.subscribe( () =>{
 
-      this.newUser = true;
-      this.submitButtonMode = "Crear";
-      this.alumnData.enable();
-      this.alumnData.reset();
-      this.alumnData.markAsUntouched();
-      this.alumnData.markAsPristine();
-
+      this.createNewUser();
     })
 
     this.modifyAlumn.subscribe( event => {
@@ -165,6 +159,9 @@ export class AlumnInfoComponent implements OnInit {
         lastName: this.alumnData.get('lastName')?.value,
       } as Alumn
     )
+  }
+
+  createNewUser(){
 
     this.newUser = true;
     this.submitButtonMode = "Crear";

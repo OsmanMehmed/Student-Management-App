@@ -170,16 +170,28 @@
         </div>
       </div>
 
+      <mat-error class = "submit-error" *ngIf = "!alumnData.valid && !alumnData.untouched && alumnData.enabled"> Por favor introduce todos los campos obligatorios </mat-error><br>
+
       <div class = "submit-button">
         <ng-container>
-            <div>
-              <button mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "saveAlumn()"> {{ submitButtonMode }} </button>
-            </div>
+          <div>
+            <button mat-raised-button color = "accent" *ngIf = "!newUser" (click) = "createNewUser()"> Cancel </button>
+          </div>
 
-            <mat-error *ngIf = "!alumnData.valid && !alumnData.untouched && alumnData.enabled"> Por favor introduce todos los campos obligatorios </mat-error>
+        </ng-container>
+
+        <span class = "divider"></span>
+
+        <ng-container>
+
+          <div class = "submit-modify-user">
+            <button  mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "saveAlumn()"> {{ submitButtonMode }} </button>
+
+          </div>
 
         </ng-container>
       </div>
+
     </mat-card>
   </form>
 </main>
