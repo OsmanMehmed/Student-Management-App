@@ -64,6 +64,10 @@
               - Contraseña
                > Obligatorio	
                > Mínimo 6 caracteres
+	       
+	       - Repetir contraseña
+	       > Obligatorio
+	       > Debe ser igual que la contraseña
 	
 	
  **En la contraseña se debe mostrar el grado de fortaleza de la misma con la siguiente lógica:**
