@@ -49,17 +49,21 @@ export class AlumnListComponent implements OnInit {
     if (!!mode && !!filteringText && filteringText.length > 0){
 
       if (mode == "name"){
-        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.name+element.middleName+element.lastName).includes(filteringText));
-        console.log(this.cardArray);
+        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.name+element.middleName+element.lastName).toLowerCase().includes(filteringText.toLowerCase()));
       }
 
       if (mode == "id"){
-        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.userID).includes(filteringText));
+        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.userID.toLowerCase()).includes(filteringText.toLowerCase()));
       }
 
       if (mode == "email"){
-        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.email).includes(filteringText));
+        this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.email.toLowerCase()).includes(filteringText.toLowerCase()));
       }
+    } else {
+
+      this.cardArray = this.alumnManagerService.alumnList;
     }
+
+
   }
 }
