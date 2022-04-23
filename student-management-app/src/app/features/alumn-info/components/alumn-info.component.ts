@@ -153,12 +153,11 @@ export class AlumnInfoComponent implements OnInit {
       } as Alumn
     )
 
+    this.submitButtonMode = "Crear";
     this.alumnData.enable();
     this.alumnData.reset();
     this.alumnData.markAsUntouched();
     this.alumnData.markAsPristine();
-    this.submitButtonMode = "Crear";
-
   }
 
   calculateStrongness(){

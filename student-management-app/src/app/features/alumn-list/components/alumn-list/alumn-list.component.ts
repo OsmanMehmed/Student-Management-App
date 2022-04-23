@@ -14,6 +14,9 @@ export class AlumnListComponent implements OnInit {
   @Output() closeSideNavEvent = new EventEmitter<number | string>();
 
   public selectedFilterOption!: string;
+  public checkNameFilter: boolean = true;
+  public checkIDFilter: boolean = false;
+  public checkEmailFilter: boolean = false;
   public cardArray !: Alumn[];
   private cardArray$: BehaviorSubject<Alumn[]>;
   public filterAlumn: FormControl = new FormControl();
@@ -21,7 +24,6 @@ export class AlumnListComponent implements OnInit {
 
   constructor(public alumnManagerService: AlumnManagerServiceService) {
     this.cardArray$ = this.alumnManagerService.alumnList$;
-
     this.cardArray$.subscribe( list => {
       this.cardArray = list;
     })
@@ -44,26 +46,48 @@ export class AlumnListComponent implements OnInit {
     this.closeSideNavEvent.emit(alumnName);
   }
 
-  filter(mode: string, filteringText: string){
+  checkAndFilter(mode: string,filter: string){
 
-    if (!!mode && !!filteringText && filteringText.length > 0){
+    if (mode == 'name'){
+      this.checkNameFilter = true;
+      this.checkIDFilter = false;
+      this.checkEmailFilter = false;
+    }
 
-      if (mode == "name"){
+    if (mode == 'id'){
+      this.checkNameFilter = false;
+      this.checkIDFilter = true;
+      this.checkEmailFilter = false;
+    }
+
+    if (mode == 'email'){
+      this.checkNameFilter = false;
+      this.checkIDFilter = false;
+      this.checkEmailFilter = true;
+    }
+
+    this.filter(filter);
+
+  }
+
+  filter(filteringText: string){
+
+    if (!!filteringText && filteringText.length > 0){
+
+      if (this.checkNameFilter){
         this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.name+element.middleName+element.lastName).toLowerCase().includes(filteringText.toLowerCase()));
       }
 
-      if (mode == "id"){
+      if (this.checkIDFilter){
         this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.userID.toLowerCase()).includes(filteringText.toLowerCase()));
       }
 
-      if (mode == "email"){
+      if (this.checkEmailFilter){
         this.cardArray = this.alumnManagerService.alumnList.filter( (element) => (element.email.toLowerCase()).includes(filteringText.toLowerCase()));
       }
     } else {
-
       this.cardArray = this.alumnManagerService.alumnList;
+
     }
-
-
   }
 }
