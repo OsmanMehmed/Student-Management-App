@@ -1,7 +1,11 @@
 # **Student-Management-App**
 ### ***Web application to manage student data, create (with password strenght meter), load, filter. (Angular-Material) (Front)***
 
-![Aplication Mockup](/mockup/app.png?raw=true "Mockup")
+<p align="center">
+  <img 
+    src="/mockup/app.png"
+  >
+</p>
 
 # **Requisitos técnicos:**
 
