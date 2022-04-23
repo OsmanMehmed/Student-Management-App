@@ -2,9 +2,8 @@ import { Alumn } from './../models/alumn.model';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlumnManagerServiceService } from '../services/alumn-manager-service.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { countries } from '../../util/country.data';
-import { discardPeriodicTasks } from '@angular/core/testing';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
@@ -23,7 +22,9 @@ export class AlumnInfoComponent implements OnInit {
   public alumnData !: FormGroup;
 
   private passwordActualAlumn!: string;
+  newUser: boolean = true;
   hidePassword: boolean = true;
+  hidePasswordConfirm: boolean = true;
   submitButtonMode: string = "Crear";
   showLess8Notification: boolean = false;
 
@@ -58,6 +59,7 @@ export class AlumnInfoComponent implements OnInit {
       password: new FormControl('',
       [Validators.required, Validators.minLength(6)]),
 
+      passwordConfirm: new FormControl('', Validators.required),
       checkboxPassword: new FormControl('')
 
     })
@@ -66,6 +68,7 @@ export class AlumnInfoComponent implements OnInit {
   ngOnInit(): void {
     this.cleanForm.subscribe( event =>{
 
+      this.newUser = true;
       this.submitButtonMode = "Crear";
       this.alumnData.enable();
       this.alumnData.reset();
@@ -76,6 +79,8 @@ export class AlumnInfoComponent implements OnInit {
 
     this.modifyAlumn.subscribe( event => {
 
+
+      this.newUser = false;
       this.submitButtonMode = "Guardar";
       this.alumnData.setValue(
         {
@@ -92,7 +97,8 @@ export class AlumnInfoComponent implements OnInit {
           password: '',
           anotherPhone: (event.otherPhone ?  event.otherPhone : ''),
           lastName: event.lastName,
-          checkboxPassword: ''
+          checkboxPassword: '',
+          passwordConfirm: ''
         }
       )
 
@@ -109,18 +115,21 @@ export class AlumnInfoComponent implements OnInit {
 
     if (event.checked){
       this.alumnData.get('password')?.enable();
+      this.alumnData.get('passwordConfirm')?.enable();
     } else {
       this.alumnData.get('password')?.disable();
+      this.alumnData.get('passwordConfirm')?.disable();
     }
   }
 
   allowEditAlumnData(){
     this.alumnData.enable();
     this.alumnData.get('password')?.disable();
+    this.alumnData.get('passwordConfirm')?.disable();
   }
 
   disableEditAlumnData(){
-    this.alumnData.enable();
+    this.alumnData.disable();
   }
 
   saveAlumn(){
@@ -153,6 +162,7 @@ export class AlumnInfoComponent implements OnInit {
       } as Alumn
     )
 
+    this.newUser = true;
     this.submitButtonMode = "Crear";
     this.alumnData.enable();
     this.alumnData.reset();
