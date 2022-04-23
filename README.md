@@ -3,6 +3,14 @@
 
 ![Aplication Mockup](/mockup/app.png?raw=true "Mockup")
 
+<p align="center">
+  <img 
+    width="300"
+    height="300"
+    src="/mockup/app.png"
+  >
+</p>
+
 # **Requisitos técnicos:**
 
                Aplicación en angular con datos guardados persistentemente en local storage.
