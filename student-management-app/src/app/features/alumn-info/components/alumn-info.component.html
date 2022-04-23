@@ -14,6 +14,16 @@
       </button>
     </ng-container>
 
+    <div class = "title-text">
+      <ng-container *ngIf = "newUser; else modifyingAlumn">
+        <span > Creando Alumno </span>
+      </ng-container>
+
+      <ng-template #modifyingAlumn>
+        <span > Modificando Alumno </span>
+      </ng-template>
+    </div>
+
 
     <span class = "divider"></span>
 
@@ -115,7 +125,7 @@
 
             <input matInput (ngModelChange) = "calculateStrongness()" [type] = "hidePassword ? 'password' : 'text'" formControlName = "password">
 
-            <button mat-icon-button [disabled] = "!alumnData.get('password')?.enabled" matSuffix (click) = "hidePassword = !hidePassword" [attr.aria-label]  = "'Hide password'" [attr.aria-pressed] = "hidePassword">
+            <button mat-icon-button [disabled] = "!alumnData.get('password')?.enabled" matSuffix (click) = "hidePassword = !hidePassword">
               <mat-icon> {{ hidePassword ? 'visibility_off' : 'visibility'}} </mat-icon>
             </button>
 
@@ -129,7 +139,7 @@
 
             <input matInput [type] = "hidePasswordConfirm ? 'password' : 'text'" formControlName = "passwordConfirm">
 
-            <button mat-icon-button [disabled] = "!alumnData.get('password')?.enabled" matSuffix (click) = "hidePasswordConfirm = !hidePasswordConfirm" [attr.aria-label]  = "'Hide password confirm'" [attr.aria-pressed] = "hidePasswordConfirm">
+            <button mat-icon-button [disabled] = "!alumnData.get('password')?.enabled" matSuffix (click) = "hidePasswordConfirm = !hidePasswordConfirm">
               <mat-icon> {{ hidePasswordConfirm ? 'visibility_off' : 'visibility'}} </mat-icon>
             </button>
 
@@ -152,7 +162,7 @@
               <button mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "saveAlumn()"> {{ submitButtonMode }} </button>
             </div>
 
-            <mat-error *ngIf = "!alumnData.valid && !alumnData.untouched && !alumnData.disabled"> Por favor introduce todos los campos obligatorios </mat-error>
+            <mat-error *ngIf = "!alumnData.valid && !alumnData.untouched && alumnData.enabled"> Por favor introduce todos los campos obligatorios </mat-error>
 
         </ng-container>
       </div>

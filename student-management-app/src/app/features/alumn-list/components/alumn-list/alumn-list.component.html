@@ -9,9 +9,17 @@
 
     <span class = "divider"></span>
 
+    <div>
+      <span> Listado de alumnos </span>
+    </div>
+
+    <span class = "divider"></span>
+
     <button mat-raised-button color="accent" (click) = "createNewUser()">
       <mat-icon> add </mat-icon>
     </button>
+
+
 
   </mat-toolbar>
 
@@ -27,6 +35,8 @@
       <input matInput placeholder = "Filtro" [formControl] = "filterAlumn" (ngModelChange) = "filter(filterAlumn.value)">
     </mat-form-field>
   </div>
+
+  <mat-divider></mat-divider>
 
   <div>
       <ng-container *ngFor = "let card of cardArray">
