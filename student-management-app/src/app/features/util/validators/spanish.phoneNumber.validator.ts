@@ -15,7 +15,10 @@ export class SpanishPhoneNumberValidator {
       return null;
     }
 
-    let validRegEx = /^(0034|\+34|34)?\+?(6\d{2}|7[1-9]\d{1})\d{6}$/;
+    // Teléfono movil
+    let validRegEx = /^(0034|\+34|34)?(6\d{2}|7\d|9[1-9]\d{1})\d{6}$/;
+
+    // Teléfono fijo
 
     if (!validRegEx.test(value)){
       return { resultado: 'Incorrecto'};

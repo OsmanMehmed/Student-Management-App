@@ -21,6 +21,7 @@ import { AlumnCardComponent } from './features/alumn-list/components/alumn-card/
 import { MatRadioModule } from '@angular/material/radio';
 import { StrengthBarComponent } from './features/alumn-info/components/strength-bar/strength-bar.component';
 import { MatSelectModule } from '@angular/material/select';
+import { EncryptService } from '../app/features/util/services/encrypt.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatSelectModule
   ],
   exports:[],
-  providers: [],
+  providers: [EncryptService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

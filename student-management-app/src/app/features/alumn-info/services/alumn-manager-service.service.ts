@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Alumn } from '../models/alumn.model';
+import { EncryptService } from '../../util/services/encrypt.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AlumnManagerServiceService {
   private _alumnList$: BehaviorSubject<Alumn[]> = new BehaviorSubject<Alumn[]>(this._alumnList);
 
 
-  constructor() {
+  constructor(private encryptService: EncryptService) {
 
     for (let y = 0; y < localStorage.length; y++){
 
@@ -49,9 +50,12 @@ export class AlumnManagerServiceService {
 
   public saveAlumn(alumn: Alumn){
 
-   if (this._alumnList.some((element) => element.name == alumn.name)){
+    alumn.password = this.encryptService.set('83Y8D*jhbSUHAL@@||@#@DHSADBJ', alumn.password);
+
+    if (this._alumnList.some((element) => element.name == alumn.name)){
 
       let alumnIndex = this._alumnList.findIndex( (element) => element.name == alumn.name)
+
       this._alumnList[alumnIndex] = alumn;
 
     } else {
