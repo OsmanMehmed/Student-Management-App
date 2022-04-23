@@ -34,7 +34,7 @@ export class MainComponent implements OnInit {
         otherPhone: '',
         lastName: '',
 
-      } as Alumn
+      } as Alumn, true
     );
 
     alumnManagerService.saveAlumn(
@@ -53,7 +53,7 @@ export class MainComponent implements OnInit {
         otherPhone: '',
         lastName: '',
 
-      } as Alumn
+      } as Alumn, true
     );
 
     alumnManagerService.saveAlumn(
@@ -72,7 +72,7 @@ export class MainComponent implements OnInit {
         otherPhone: '008618463707254',
         lastName: 'Frin',
 
-      } as Alumn
+      } as Alumn, true
     );
 
 

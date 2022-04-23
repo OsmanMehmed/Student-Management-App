@@ -12,6 +12,8 @@ import { SpanishPhoneNumberValidator } from '../../util/validators/spanish.phone
 import { SpanishPostalCodeValidator } from '../../util/validators/spanish.postalCode.validator';
 import { ConfirmPasswordValidator } from '../../util/validators/confirmPassword.validator';
 import { Countries } from '../../util/models/country.model';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationPasswordComponent } from './confirmation-password/confirmation-password.component';
 
 @Component({
   selector: 'app-alumn-info',
@@ -40,7 +42,8 @@ export class AlumnInfoComponent implements OnInit {
 
 
   constructor(private form: FormBuilder,
-              private alumnManager: AlumnManagerServiceService) {
+              private alumnManager: AlumnManagerServiceService,
+              private dialog: MatDialog) {
 
     this.alumnData = this.form.group({
 
@@ -131,15 +134,32 @@ export class AlumnInfoComponent implements OnInit {
     this.alumnData.disable();
   }
 
+  showConfirmPasswordDialog(){
+
+    const dialogRef = this.dialog.open(ConfirmationPasswordComponent, {
+      width: '350px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result){
+        this.saveAlumn();
+      }
+    });
+
+  }
+
   saveAlumn(){
+
     let savePassword: string;
+    let alteredPassword: boolean;
 
     if (this.alumnData.get('password')?.enabled){
       savePassword = this.alumnData.get('password')?.value;
-      this.passwordActualAlumn = savePassword;
+      alteredPassword = true;
 
     } else {
       savePassword = this.passwordActualAlumn;
+      alteredPassword = false;
     }
 
     this.alumnManager.saveAlumn(
@@ -157,7 +177,7 @@ export class AlumnInfoComponent implements OnInit {
         password: savePassword,
         otherPhone: this.alumnData.get('anotherPhone')?.value,
         lastName: this.alumnData.get('lastName')?.value,
-      } as Alumn
+      } as Alumn, alteredPassword
     )
 
     if (this.newUser){

@@ -185,7 +185,7 @@
         <ng-container>
 
           <div class = "submit-modify-user">
-            <button  mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "saveAlumn()"> {{ submitButtonMode }} </button>
+            <button  mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "showLess8Notification? saveAlumn(): showConfirmPasswordDialog()"> {{ submitButtonMode }} </button>
           </div>
 
         </ng-container>

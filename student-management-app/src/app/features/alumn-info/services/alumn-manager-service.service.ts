@@ -48,9 +48,11 @@ export class AlumnManagerServiceService {
     this._alumnList$ = value;
   }
 
-  public saveAlumn(alumn: Alumn){
+  public saveAlumn(alumn: Alumn, alterPassword: boolean){
 
-    alumn.password = this.encryptService.set('83Y8D*jhbSUHAL@@||@#@DHSADBJ', alumn.password);
+    if (alterPassword){
+      alumn.password = this.encryptService.set('83Y8D*jhbSUHAL@@||@#@DHSADBJ', alumn.password);
+    }
 
     if (this._alumnList.some((element) => element.name == alumn.name)){
 
