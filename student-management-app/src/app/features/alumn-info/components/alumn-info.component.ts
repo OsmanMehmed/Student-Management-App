@@ -1,10 +1,17 @@
+import { Provincia } from './../../util/models/spanish.province.model';
 import { Alumn } from './../models/alumn.model';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlumnManagerServiceService } from '../services/alumn-manager-service.service';
-import { Subject } from 'rxjs';
-import { countries } from '../../util/country.data';
+import { Observable, of, Subject, BehaviorSubject } from 'rxjs';
+import { countries } from '../../util/data/country.data';
+import { provinces } from '../../util/data/spanish.provinces';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { SpanishDniValidator } from '../../util/validators/spanish.dni.validator';
+import { SpanishPhoneNumberValidator } from '../../util/validators/spanish.phoneNumber.validator';
+import { SpanishPostalCodeValidator } from '../../util/validators/spanish.postalCode.validator';
+import { ConfirmPasswordValidator } from '../../util/validators/confirmPassword.validator';
+import { Countries } from '../../util/models/country.model';
 
 @Component({
   selector: 'app-alumn-info',
@@ -13,7 +20,8 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 })
 export class AlumnInfoComponent implements OnInit {
 
-  public countries:any = countries;
+  public countries: Countries[] = countries;
+  public provinces: Provincia[] = provinces;
 
   @Input("cleanForm") cleanForm !: Subject<boolean>;
   @Input("modifyAlumn") modifyAlumn !: Subject<Alumn>;
@@ -40,33 +48,28 @@ export class AlumnInfoComponent implements OnInit {
       middleName: new FormControl('', Validators.required),
       lastName: new FormControl(''),
       email: new FormControl('',[Validators.required, Validators.email]),
-
-      id: new FormControl('',
-      [Validators.required, Validators.pattern('[0-9]{8,8}[A-Za-z]')]),
-
-      phone: new FormControl('',
-      [Validators.required, Validators.pattern('(0034|34)?[ -]*(6|7)([0-9]){2}[ -]?(([0-9]){2}[ -]?([0-9]){2}[ -]?([0-9]){2}|([0-9]){3}[ -]?([0-9]){3})')]),
-
-      anotherPhone: new FormControl('',
-      [Validators.pattern('(0034|34)?[ -]*(6|7)([0-9]){2}[ -]?(([0-9]){2}[ -]?([0-9]){2}[ -]?([0-9]){2}|([0-9]){3}[ -]?([0-9]){3})')]),
-
+      id: new FormControl('', Validators.required),
+      phone: new FormControl('', Validators.required),
+      anotherPhone: new FormControl(''),
       country: new FormControl('', Validators.required),
       province: new FormControl('', Validators.required),
       postalCode: new FormControl('', Validators.required),
       location: new FormControl('', Validators.required),
       userName: new FormControl('', Validators.required),
-
       password: new FormControl('',
       [Validators.required, Validators.minLength(6)]),
 
       passwordConfirm: new FormControl('', Validators.required),
       checkboxPassword: new FormControl('')
-
     })
+
+    this.alumnData.get('passwordConfirm')?.addValidators(ConfirmPasswordValidator.isValidPassword(this.alumnData.get('password')));
+
+
   }
 
   ngOnInit(): void {
-    this.cleanForm.subscribe( event =>{
+    this.cleanForm.subscribe( () =>{
 
       this.newUser = true;
       this.submitButtonMode = "Crear";
@@ -79,6 +82,8 @@ export class AlumnInfoComponent implements OnInit {
 
     this.modifyAlumn.subscribe( event => {
 
+      this.alumnData.markAllAsTouched();
+      this.alumnData.markAsDirty();
 
       this.newUser = false;
       this.submitButtonMode = "Guardar";
@@ -158,7 +163,6 @@ export class AlumnInfoComponent implements OnInit {
         password: savePassword,
         otherPhone: this.alumnData.get('anotherPhone')?.value,
         lastName: this.alumnData.get('lastName')?.value,
-
       } as Alumn
     )
 
@@ -174,10 +178,9 @@ export class AlumnInfoComponent implements OnInit {
     let password = this.alumnData.get('password')?.value;
     let points = 0;
 
-    // Longitud
-
     if (password){
 
+      // Longitud
       if (password.length == 7 && password.length == 8){
         points = points + 1;
       } else if (password.length >= 9 && password.length <= 12){
@@ -187,41 +190,74 @@ export class AlumnInfoComponent implements OnInit {
       }
 
       // Contiene letras
-
       if (/[a-zA-Z]/.test(password)){
         points = points + 1;
       }
 
       // Uso de mayúsculas y minúsculas
-
       if (/[A-Z]/.test(password) && /[a-z]/.test(password)){
         points = points + 2;
       }
 
       // Uso de números
-
       if (/[0-9]/.test(password)){
         points = points + 1;
       }
 
       // Uso de símbolos
-
       if (/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/.test(password)){
         points = points + 2;
       }
 
       // Si cumple con todo lo anterior se le da un punto extra
-
       if (points == 9){
         points = 10;
       }
     }
-
     this.strenght.next([this.alumnData.get('password'),points]);
+
+  }
+
+  triggerConfirmPasswordValidation(){
+
+    this.alumnData.get('passwordConfirm')?.updateValueAndValidity();
   }
 
   puntuationLess8Notification(event: boolean){
-
     this.showLess8Notification = event;
   }
+
+  resetValidatorsByCountrySelected(country: string){
+
+    if (country == 'Spain'){
+      this.alumnData.get('phone')?.addValidators(SpanishPhoneNumberValidator.isValidNumber());
+      this.alumnData.get('phone')?.updateValueAndValidity();
+      this.alumnData.get('id')?.addValidators(SpanishDniValidator.isValidDni());
+      this.alumnData.get('id')?.updateValueAndValidity();
+      this.alumnData.get('postalCode')?.addValidators(SpanishPostalCodeValidator.isValidNumber());
+      this.alumnData.get('postalCode')?.updateValueAndValidity();
+
+    } else {
+
+      this.alumnData.get('phone')?.clearValidators();
+      this.alumnData.get('phone')?.addValidators(Validators.required);
+      this.alumnData.get('id')?.clearValidators();
+      this.alumnData.get('id')?.addValidators(Validators.required);
+      this.alumnData.get('postalCode')?.clearValidators();
+      this.alumnData.get('postalCode')?.addValidators(Validators.required);
+
+    }
+  }
+
+  resetProvince(){
+    this.alumnData.get('province')?.setValue('');
+    this.alumnData.get('province')?.updateValueAndValidity();
+
+    this.alumnData.get('location')?.setValue('');
+    this.alumnData.get('location')?.updateValueAndValidity();
+
+    this.alumnData.get('postalCode')?.setValue('');
+    this.alumnData.get('postalCode')?.updateValueAndValidity();
+  }
+
 }

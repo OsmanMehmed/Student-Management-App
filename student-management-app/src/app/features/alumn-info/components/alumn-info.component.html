@@ -88,14 +88,23 @@
         <mat-form-field appearance = "outline">
           <mat-label> País</mat-label>
           <!-- <input matInput  placeholder = "País" formControlName = "country"> -->
-          <mat-select formControlName = "country">
-            <mat-option *ngFor="let country of countries" [value]="country.name">{{country.name}}</mat-option>
+          <mat-select formControlName = "country" (ngModelChange) = "resetValidatorsByCountrySelected($event); resetProvince()">
+            <mat-option *ngFor = "let country of countries" [value] = "country.name"> {{ country.name }} </mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance = "outline">
-          <mat-label> Provincia</mat-label>
-          <input matInput  placeholder = "Provincia" formControlName = "province">
+          <mat-label> Provincia </mat-label>
+
+          <ng-container *ngIf = "alumnData.get('country')?.value !== 'Spain'; else displayProvinceList">
+            <input matInput  placeholder = "Provincia" formControlName = "province">
+          </ng-container>
+
+          <ng-template #displayProvinceList>
+            <mat-select formControlName = "province">
+              <mat-option *ngFor = "let province of provinces" [value] = "province.name"> {{ province.name }}</mat-option>
+            </mat-select>
+          </ng-template>
         </mat-form-field>
 
         <mat-form-field appearance = "outline">
@@ -123,15 +132,19 @@
           <mat-form-field appearance = "outline">
             <mat-label> Contraseña </mat-label>
 
-            <input matInput (ngModelChange) = "calculateStrongness()" [type] = "hidePassword ? 'password' : 'text'" formControlName = "password">
+            <input matInput (ngModelChange) = "calculateStrongness(); triggerConfirmPasswordValidation()" [type] = "hidePassword ? 'password' : 'text'" formControlName = "password">
 
             <button mat-icon-button [disabled] = "!alumnData.get('password')?.enabled" matSuffix (click) = "hidePassword = !hidePassword">
               <mat-icon> {{ hidePassword ? 'visibility_off' : 'visibility'}} </mat-icon>
             </button>
 
+            <mat-hint>
+              <mat-error *ngIf = "showLess8Notification && alumnData.get('password')?.enabled && alumnData.get('password')?.dirty"> Valor introducido inferior a 8 puntos </mat-error>
+            </mat-hint>
+
           </mat-form-field>
 
-          <app-strength-bar [strenght] = "strenght" (puntuationLess8) = "puntuationLess8Notification($event)"></app-strength-bar>
+          <br><br><app-strength-bar [strenght] = "strenght" (puntuationLess8) = "puntuationLess8Notification($event)"></app-strength-bar>
 
 
           <mat-form-field appearance = "outline">
@@ -143,6 +156,8 @@
               <mat-icon> {{ hidePasswordConfirm ? 'visibility_off' : 'visibility'}} </mat-icon>
             </button>
 
+            <mat-error *ngIf = "!alumnData.get('confirmPassword')?.hasError('isValidPassword')"> Las contraseñas no son iguales </mat-error>
+
           </mat-form-field>
 
           <mat-hint [hidden] = "submitButtonMode === 'Crear'? true: false">
@@ -151,7 +166,6 @@
             </mat-checkbox>
           </mat-hint>
 
-          <mat-error *ngIf = "showLess8Notification && alumnData.get('password')?.enabled && alumnData.get('password')?.dirty"> La contraseña introducida es inferior a 8 puntos </mat-error>
 
         </div>
       </div>

@@ -16,8 +16,8 @@ export class StrengthBarComponent implements OnInit {
     default: 'black',
     empty: 'grey',
     error: 'red',
-    highWarning: 'yellow',
-    lowWarning: 'orange',
+    highWarning: 'black',
+    lowWarning: 'red',
     correct: 'green',
     strong: 'blue',
     veryStrong: 'purple'
