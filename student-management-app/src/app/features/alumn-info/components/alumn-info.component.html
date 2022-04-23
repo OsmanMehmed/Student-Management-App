@@ -115,7 +115,7 @@
 
             <input matInput (ngModelChange) = "calculateStrongness()" [type] = "hidePassword ? 'password' : 'text'" formControlName = "password">
 
-            <button mat-icon-button [disabled] = "!alumnData.enabled" matSuffix (click) = "hidePassword = !hidePassword" [attr.aria-label]  = "'Hide password'" [attr.aria-pressed] = "hidePassword">
+            <button mat-icon-button [disabled] = "!alumnData.get('password')?.enabled" matSuffix (click) = "hidePassword = !hidePassword" [attr.aria-label]  = "'Hide password'" [attr.aria-pressed] = "hidePassword">
               <mat-icon> {{ hidePassword ? 'visibility_off' : 'visibility'}} </mat-icon>
             </button>
 
@@ -123,13 +123,13 @@
 
           <app-strength-bar [strenght] = "strenght" (puntuationLess8) = "puntuationLess8Notification($event)"></app-strength-bar>
 
-          <mat-error *ngIf = "showLess8Notification && alumnData.get('password')?.enabled && alumnData.get('password')?.dirty"> La contraseña introducida es inferior a 8 puntos </mat-error>
-
           <mat-hint [hidden] = "submitButtonMode === 'Crear'? true: false">
             <mat-checkbox formControlName = "checkboxPassword" (change) = "toggleAccessEditPassword($event)">
               Permitir modificar contraseña
             </mat-checkbox>
           </mat-hint>
+
+          <mat-error *ngIf = "showLess8Notification && alumnData.get('password')?.enabled && alumnData.get('password')?.dirty"> La contraseña introducida es inferior a 8 puntos </mat-error>
 
         </div>
       </div>
