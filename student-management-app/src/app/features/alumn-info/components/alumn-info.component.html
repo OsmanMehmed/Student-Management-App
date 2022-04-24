@@ -47,7 +47,7 @@
 
         <mat-form-field appearance = "outline">
           <mat-label> DNI </mat-label>
-          <input matInput  placeholder = "DNI" formControlName = "id">
+          <input matInput  placeholder = "DNI" formControlName = "userID">
         </mat-form-field>
 
         <mat-form-field appearance = "outline">
@@ -70,7 +70,7 @@
 
         <mat-form-field appearance = "outline">
           <mat-label> Otro teléfono</mat-label>
-          <input matInput  placeholder = "Otro teléfono" formControlName = "anotherPhone">
+          <input matInput  placeholder = "Otro teléfono" formControlName = "otherPhone">
           <mat-hint>Opcional</mat-hint>
         </mat-form-field>
 
@@ -125,7 +125,7 @@
       <div class = "grid-container" id = "grid-container2">
         <mat-form-field appearance = "outline">
           <mat-label> Nombre de usuario </mat-label>
-          <input matInput  placeholder = "Nombre de usuario" formControlName = "userName">
+          <input matInput  placeholder = "Nombre de usuario" formControlName = "nickName">
         </mat-form-field>
 
         <div>
@@ -144,7 +144,7 @@
 
           </mat-form-field>
 
-          <br><br><app-strength-bar [strenght] = "strenght" (puntuationLess8) = "puntuationLess8Notification($event)"></app-strength-bar>
+          <br><br><app-strength-bar [strenght] = "strenght$" (puntuationLess8) = "puntuationLess8Notification($event)"></app-strength-bar>
 
 
           <mat-form-field appearance = "outline">
@@ -175,7 +175,7 @@
       <div class = "submit-button">
         <ng-container>
           <div>
-            <button mat-raised-button color = "accent" *ngIf = "!newUser" (click) = "resetValues()"> Cancelar </button>
+            <button mat-raised-button color = "accent" *ngIf = "!newUser" (click) = "hardResetValues()"> Cancelar </button>
           </div>
 
         </ng-container>
@@ -185,7 +185,7 @@
         <ng-container>
 
           <div class = "submit-modify-user">
-            <button  mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "showLess8Notification? saveAlumn(): showConfirmPasswordDialog()"> {{ submitButtonMode }} </button>
+            <button  mat-raised-button color = "accent" [disabled]  = "!alumnData.valid" (click) = "showLess8Notification && alumnData.get('password')?.enabled? showConfirmPasswordDialog(): saveAlumn()"> {{ submitButtonMode }} </button>
           </div>
 
         </ng-container>

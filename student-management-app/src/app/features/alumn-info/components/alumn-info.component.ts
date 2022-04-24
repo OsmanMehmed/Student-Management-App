@@ -15,6 +15,7 @@ import { Countries } from '../../util/models/country.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationPasswordComponent } from './confirmation-password/confirmation-password.component';
 
+
 @Component({
   selector: 'app-alumn-info',
   templateUrl: './alumn-info.component.html',
@@ -28,7 +29,7 @@ export class AlumnInfoComponent implements OnInit {
   @Input("cleanForm") cleanForm !: Subject<boolean>;
   @Input("modifyAlumn") modifyAlumn !: Subject<Alumn>;
 
-  public strenght: Subject<[AbstractControl | null, number]> = new Subject();
+  public strenght$: Subject<[AbstractControl | null, number]> = new Subject();
   public alumnData !: FormGroup;
 
   private passwordActualAlumn!: string;
@@ -45,66 +46,41 @@ export class AlumnInfoComponent implements OnInit {
               private alumnManager: AlumnManagerServiceService,
               private dialog: MatDialog) {
 
-    this.alumnData = this.form.group({
-
-      name: new FormControl('', Validators.required),
-      middleName: new FormControl('', Validators.required),
-      lastName: new FormControl(''),
-      email: new FormControl('',[Validators.required, Validators.email]),
-      id: new FormControl('', Validators.required),
-      phone: new FormControl('', Validators.required),
-      anotherPhone: new FormControl(''),
-      country: new FormControl('', Validators.required),
-      province: new FormControl('', Validators.required),
-      postalCode: new FormControl('', Validators.required),
-      location: new FormControl('', Validators.required),
-      userName: new FormControl('', Validators.required),
-      password: new FormControl('',
-      [Validators.required, Validators.minLength(6)]),
-
-      passwordConfirm: new FormControl('', Validators.required),
-      checkboxPassword: new FormControl('')
-    })
+    this.assignDefaultValidators();
 
     this.alumnData.get('passwordConfirm')?.addValidators(ConfirmPasswordValidator.isValidPassword(this.alumnData.get('password')));
-
 
   }
 
   ngOnInit(): void {
     this.cleanForm.subscribe( () =>{
 
-      this.resetValues();
+      this.hardResetValues();
     })
 
     this.modifyAlumn.subscribe( event => {
 
       this.alumnData.markAllAsTouched();
       this.alumnData.markAsDirty();
-
       this.newUser = false;
       this.submitButtonMode = "Guardar";
-      this.alumnData.setValue(
-        {
-          name: event.name,
-          middleName: event.middleName,
-          email: event.email,
-          id: event.userID,
-          phone: event.phone,
-          country: event.country,
-          province: event.province,
-          postalCode: event.postalCode,
-          location: event.location,
-          userName: event.nickName,
-          password: '',
-          anotherPhone: (event.otherPhone ?  event.otherPhone : ''),
-          lastName: event.lastName,
-          checkboxPassword: '',
-          passwordConfirm: ''
-        }
-      )
 
-      this.passwordActualAlumn = event.password;
+      this.loadValues({
+        name: event.name,
+        middleName: event.middleName,
+        email: event.email,
+        userID: event.userID,
+        phone: event.phone,
+        country: event.country,
+        province: event.province,
+        postalCode: event.postalCode,
+        location: event.location,
+        nickName: event.nickName,
+        password: '',
+        otherPhone: (event.otherPhone ?  event.otherPhone : ''),
+        lastName: event.lastName
+      } as Alumn);
+
       this.alumnData.disable();
     })
   }
@@ -136,16 +112,47 @@ export class AlumnInfoComponent implements OnInit {
 
   showConfirmPasswordDialog(){
 
-    const dialogRef = this.dialog.open(ConfirmationPasswordComponent, {
-      width: '350px',
-    });
+    let savePassword: string;
+    let alteredPassword: boolean;
+
+    if (this.alumnData.get('password')?.enabled){
+      savePassword = this.alumnData.get('password')?.value;
+      alteredPassword = true;
+
+    } else {
+      savePassword = this.passwordActualAlumn;
+      alteredPassword = false;
+    }
+
+    let alumn =
+      {
+        name: this.alumnData.get('name')?.value,
+        middleName: this.alumnData.get('middleName')?.value,
+        email: this.alumnData.get('email')?.value,
+        userID: this.alumnData.get('userID')?.value,
+        phone: this.alumnData.get('phone')?.value,
+        country: this.alumnData.get('country')?.value,
+        province: this.alumnData.get('province')?.value,
+        postalCode: this.alumnData.get('postalCode')?.value,
+        location: this.alumnData.get('location')?.value,
+        nickName: this.alumnData.get('nickName')?.value,
+        password: savePassword,
+        otherPhone: this.alumnData.get('otherPhone')?.value,
+        lastName: this.alumnData.get('lastName')?.value,
+      } as Alumn;
+
+
+    const dialogRef = this.dialog.open(ConfirmationPasswordComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result){
-        this.saveAlumn();
+        this.alumnManager.saveAlumn(alumn, alteredPassword);
+      } else {
+        this.loadValues(alumn);
       }
     });
 
+    this.hardResetValues();
   }
 
   saveAlumn(){
@@ -167,32 +174,83 @@ export class AlumnInfoComponent implements OnInit {
         name: this.alumnData.get('name')?.value,
         middleName: this.alumnData.get('middleName')?.value,
         email: this.alumnData.get('email')?.value,
-        userID: this.alumnData.get('id')?.value,
+        userID: this.alumnData.get('userID')?.value,
         phone: this.alumnData.get('phone')?.value,
         country: this.alumnData.get('country')?.value,
         province: this.alumnData.get('province')?.value,
         postalCode: this.alumnData.get('postalCode')?.value,
         location: this.alumnData.get('location')?.value,
-        nickName: this.alumnData.get('userName')?.value,
+        nickName: this.alumnData.get('nickName')?.value,
         password: savePassword,
-        otherPhone: this.alumnData.get('anotherPhone')?.value,
+        otherPhone: this.alumnData.get('otherPhone')?.value,
         lastName: this.alumnData.get('lastName')?.value,
       } as Alumn, alteredPassword
     )
 
-    if (this.newUser){
-      this.resetValues();
-    }
+    this.hardResetValues();
   }
 
-  resetValues(){
+  softResetValues(){
+    this.hidePassword = true;
+    this.hidePasswordConfirm = true;
+    this.showLess8Notification = false;
+  }
+
+  hardResetValues(){
 
     this.newUser = true;
+    this.hidePassword = true;
+    this.hidePasswordConfirm = true;
     this.submitButtonMode = "Crear";
+    this.showLess8Notification = false;
     this.alumnData.enable();
     this.alumnData.reset();
-    this.alumnData.markAsUntouched();
-    this.alumnData.markAsPristine();
+  }
+
+  loadValues(data: Alumn){
+
+    this.alumnData.setValue(
+      {
+        name: data.name,
+        middleName: data.middleName,
+        email: data.email,
+        userID: data.userID,
+        phone: data.phone,
+        country: data.country,
+        province: data.province,
+        postalCode: data.postalCode,
+        location: data.location,
+        nickName: data.nickName,
+        password: '',
+        otherPhone: (data.otherPhone ?  data.otherPhone : ''),
+        lastName: data.lastName,
+        checkboxPassword: '',
+        passwordConfirm: ''
+      }
+    )
+
+    this.passwordActualAlumn = data.password;
+  }
+
+  assignDefaultValidators(){
+
+    this.alumnData = this.form.group({
+      name: new FormControl('', Validators.required),
+      middleName: new FormControl('', Validators.required),
+      lastName: new FormControl(''),
+      email: new FormControl('',[Validators.required, Validators.email]),
+      userID: new FormControl('', Validators.required),
+      phone: new FormControl('', Validators.required),
+      otherPhone: new FormControl(''),
+      country: new FormControl('', Validators.required),
+      province: new FormControl('', Validators.required),
+      postalCode: new FormControl('', Validators.required),
+      location: new FormControl('', Validators.required),
+      nickName: new FormControl('', Validators.required),
+      password: new FormControl('',[Validators.required, Validators.minLength(6)]),
+      passwordConfirm: new FormControl('', Validators.required),
+      checkboxPassword: new FormControl('')
+    });
   }
 
   calculateStrongness(){
@@ -235,7 +293,7 @@ export class AlumnInfoComponent implements OnInit {
         points = 10;
       }
     }
-    this.strenght.next([this.alumnData.get('password'),points]);
+    this.strenght$.next([this.alumnData.get('password'),points]);
 
   }
 
@@ -253,8 +311,8 @@ export class AlumnInfoComponent implements OnInit {
     if (country == 'Spain'){
       this.alumnData.get('phone')?.addValidators(SpanishPhoneNumberValidator.isValidNumber());
       this.alumnData.get('phone')?.updateValueAndValidity();
-      this.alumnData.get('id')?.addValidators(SpanishDniValidator.isValidDni());
-      this.alumnData.get('id')?.updateValueAndValidity();
+      this.alumnData.get('userID')?.addValidators(SpanishDniValidator.isValidDni());
+      this.alumnData.get('userID')?.updateValueAndValidity();
       this.alumnData.get('postalCode')?.addValidators(SpanishPostalCodeValidator.isValidNumber());
       this.alumnData.get('postalCode')?.updateValueAndValidity();
 
@@ -262,8 +320,8 @@ export class AlumnInfoComponent implements OnInit {
 
       this.alumnData.get('phone')?.clearValidators();
       this.alumnData.get('phone')?.addValidators(Validators.required);
-      this.alumnData.get('id')?.clearValidators();
-      this.alumnData.get('id')?.addValidators(Validators.required);
+      this.alumnData.get('userID')?.clearValidators();
+      this.alumnData.get('userID')?.addValidators(Validators.required);
       this.alumnData.get('postalCode')?.clearValidators();
       this.alumnData.get('postalCode')?.addValidators(Validators.required);
 
