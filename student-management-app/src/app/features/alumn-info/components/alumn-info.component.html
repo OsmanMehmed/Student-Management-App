@@ -102,7 +102,7 @@
 
           <ng-template #displayProvinceList>
 
-            <mat-select formControlName = "province" (ngModelChange) = "resetValidatorsByProvinceSelected($event); resetPostalCode()">
+            <mat-select formControlName = "province" (ngModelChange) = "resetValidatorsByProvinceSelected($event, this.alumnData.get('country')?.value); resetPostalCode()">
               <mat-option *ngFor = "let province of provinces" [value] = "province.name"> {{ province.name }}</mat-option>
             </mat-select>
           </ng-template>

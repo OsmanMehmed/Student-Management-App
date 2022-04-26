@@ -54,12 +54,19 @@ export class AlumnInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.cleanForm.subscribe( () =>{
-
+      this.alumnData.clearValidators();
+      this.assignDefaultValidators();
       this.hardResetValues();
+      this.alumnData.updateValueAndValidity();
     })
 
     this.modifyAlumn.subscribe( event => {
 
+      this.alumnData.clearValidators();
+      this.assignDefaultValidators();
+      this.resetValidatorsByCountrySelected(event.country);
+      this.resetValidatorsByProvinceSelected(event.province,event.country);
+      this.alumnData.updateValueAndValidity();
       this.alumnData.markAllAsTouched();
       this.alumnData.markAsDirty();
       this.newUser = false;
@@ -81,6 +88,7 @@ export class AlumnInfoComponent implements OnInit {
         lastName: event.lastName
       } as Alumn);
 
+      this.passwordActualAlumn = event.password;
       this.alumnData.disable();
     })
   }
@@ -147,10 +155,16 @@ export class AlumnInfoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result){
         this.alumnManager.saveAlumn(alumn, alteredPassword);
+        this.alumnData.clearValidators();
+        this.assignDefaultValidators();
+        this.alumnData.updateValueAndValidity();
+        this.hardResetValues();
+
       } else {
         this.loadValues(alumn);
       }
     });
+
 
     this.hardResetValues();
   }
@@ -187,6 +201,9 @@ export class AlumnInfoComponent implements OnInit {
       } as Alumn, alteredPassword
     )
 
+    this.alumnData.clearValidators();
+    this.assignDefaultValidators();
+    this.alumnData.updateValueAndValidity();
     this.hardResetValues();
   }
 
@@ -228,7 +245,6 @@ export class AlumnInfoComponent implements OnInit {
         passwordConfirm: ''
       }
     )
-
     this.passwordActualAlumn = data.password;
   }
 
@@ -307,33 +323,50 @@ export class AlumnInfoComponent implements OnInit {
   }
 
   resetValidatorsByCountrySelected(country: string){
-
-    if (country == 'Spain'){
-      this.alumnData.get('phone')?.addValidators(SpanishPhoneNumberValidator.isValidNumber());
-      this.alumnData.get('phone')?.updateValueAndValidity();
-      this.alumnData.get('userID')?.addValidators(SpanishDniValidator.isValidDni());
-      this.alumnData.get('userID')?.updateValueAndValidity();
-
-    } else {
+    if (country){
 
       this.alumnData.get('phone')?.clearValidators();
       this.alumnData.get('phone')?.addValidators(Validators.required);
+      this.alumnData.get('phone')?.updateValueAndValidity();
       this.alumnData.get('userID')?.clearValidators();
       this.alumnData.get('userID')?.addValidators(Validators.required);
+      this.alumnData.get('userID')?.updateValueAndValidity();
       this.alumnData.get('postalCode')?.clearValidators();
       this.alumnData.get('postalCode')?.addValidators(Validators.required);
+      this.alumnData.get('postalCode')?.updateValueAndValidity();
 
+      if (country == 'Spain'){
+
+        this.alumnData.get('phone')?.addValidators(SpanishPhoneNumberValidator.isValidNumber());
+        this.alumnData.get('phone')?.updateValueAndValidity();
+        this.alumnData.get('userID')?.addValidators(SpanishDniValidator.isValidDni());
+        this.alumnData.get('userID')?.updateValueAndValidity();
+        this.alumnData.get('postalCode')?.addValidators(SpanishPostalCodeValidator.isValidNumber(null));
+        this.alumnData.get('postalCode')?.updateValueAndValidity();
+      }
+    }
+
+  }
+
+  resetValidatorsByProvinceSelected(province: string, country: string){
+    if (province && country){
+      this.alumnData.get('postalCode')?.clearValidators();
+      this.alumnData.get('postalCode')?.addValidators(Validators.required);
+      this.alumnData.get('postalCode')?.updateValueAndValidity();
+
+      if (country == 'Spain'){
+
+        this.alumnData.get('postalCode')?.addValidators(SpanishPostalCodeValidator.isValidNumber(province));
+        this.alumnData.get('postalCode')?.updateValueAndValidity();
+      }
     }
   }
 
-  resetValidatorsByProvinceSelected(province: string){
-    this.alumnData.get('postalCode')?.addValidators(SpanishPostalCodeValidator.isValidNumber(this.alumnData.get('province')?.value));
-    this.alumnData.get('postalCode')?.updateValueAndValidity();
-  }
-
   resetProvince(){
-    this.alumnData.get('province')?.setValue('');
-    this.alumnData.get('province')?.updateValueAndValidity();
+    if (!this.alumnData.get('province')?.valid){
+      this.alumnData.get('province')?.setValue('');
+      this.alumnData.get('province')?.updateValueAndValidity();
+    }
   }
 
   resetLocation(){
@@ -342,8 +375,10 @@ export class AlumnInfoComponent implements OnInit {
   }
 
   resetPostalCode(){
-    this.alumnData.get('postalCode')?.setValue('');
+    if (!this.alumnData.get('postalCode')?.valid){
+      this.alumnData.get('postalCode')?.setValue('');
     this.alumnData.get('postalCode')?.updateValueAndValidity();
+    }
   }
 
 }

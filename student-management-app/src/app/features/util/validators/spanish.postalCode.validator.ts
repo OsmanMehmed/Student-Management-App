@@ -7,7 +7,7 @@ export class SpanishPostalCodeValidator {
   public static provincesLoaded: Provincia[] = provinces;
 
 
-  static isValidNumber(province: string): ValidatorFn {
+  static isValidNumber(province: string | null): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       return this._isCorrectNumber(control.value, province) == null
         ? null
@@ -15,7 +15,7 @@ export class SpanishPostalCodeValidator {
     };
   }
 
-  private static _isCorrectNumber(value: string, province: string) {
+  private static _isCorrectNumber(value: string, province: string | null) {
 
 
 
@@ -27,33 +27,31 @@ export class SpanishPostalCodeValidator {
 
     if (!validRegEx.test(value)){
       return { resultado: 'Incorrecto'};
+
     } else {
 
-      let provinceFound: Provincia | undefined = this.provincesLoaded.find( element => element.name == province);
+      if (province){
 
-      console.log(provinceFound?.name);
-      console.log(provinceFound?.cod);
-      console.log(value);
-      console.log(value.slice(0,2));
+        let provinceFound: Provincia | undefined = this.provincesLoaded.find( element => element.name == province);
 
+        if (provinceFound){
+          if (value.slice(0,2) == provinceFound.cod){
 
+            return null;
 
-      if (provinceFound){
-        if (value.slice(0,2) == provinceFound.cod){
+          } else{
+            return { resultado: 'Incorrecto'};
 
-          return null;
-
-        } else{
+          }
+        } else {
           return { resultado: 'Incorrecto'};
 
         }
       } else {
-
-        return { resultado: 'Incorrecto'};
+        return null;
 
       }
     }
-
   }
 }
 
