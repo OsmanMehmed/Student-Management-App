@@ -88,7 +88,7 @@
         <mat-form-field appearance = "outline">
           <mat-label> País</mat-label>
           <!-- <input matInput  placeholder = "País" formControlName = "country"> -->
-          <mat-select formControlName = "country" (ngModelChange) = "resetValidatorsByCountrySelected($event); resetProvince()">
+          <mat-select formControlName = "country" (ngModelChange) = "resetValidatorsByCountrySelected($event); resetProvince(); resetLocation(); resetPostalCode()">
             <mat-option *ngFor = "let country of countries" [value] = "country.name"> {{ country.name }} </mat-option>
           </mat-select>
         </mat-form-field>
@@ -101,7 +101,8 @@
           </ng-container>
 
           <ng-template #displayProvinceList>
-            <mat-select formControlName = "province">
+
+            <mat-select formControlName = "province" (ngModelChange) = "resetValidatorsByProvinceSelected($event); resetPostalCode()">
               <mat-option *ngFor = "let province of provinces" [value] = "province.name"> {{ province.name }}</mat-option>
             </mat-select>
           </ng-template>
